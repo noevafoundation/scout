@@ -66,10 +66,10 @@ form.addEventListener('submit', async (event) => {
     });
     const payload = await response.json();
     if (!response.ok) throw new Error(payload.error || 'Run failed');
-    statusEl.textContent = `Complete`;
-    await refresh();
-  } catch {
-    statusEl.textContent = 'Demo mode';
+    statusEl.textContent = payload.dashboard?.leads?.length ? 'Live scout' : 'No contacts';
+    renderDashboard(payload.dashboard);
+  } catch (error) {
+    statusEl.textContent = error.message || 'Demo mode';
     renderDashboard(DEMO_DASHBOARD);
   } finally {
     button.disabled = false;
@@ -114,6 +114,8 @@ async function refresh() {
 }
 
 function renderDashboard(data) {
+  if (!data) return;
+
   metricLeads.textContent = data.leads.length;
   metricCompanies.textContent = data.companies.length;
   metricDrafts.textContent = data.drafts.length;
