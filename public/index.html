@@ -7,161 +7,119 @@
     <link rel="stylesheet" href="./styles.css">
   </head>
   <body>
-    <div class="app-shell">
-      <aside class="sidebar" aria-label="Primary navigation">
-        <a class="brand" href="#overview" aria-label="Scout overview">
-          <span class="brand-mark">S</span>
-          <span>
-            <strong>Scout</strong>
-            <small>Outbound workspace</small>
-          </span>
-        </a>
-
-        <nav class="nav-list">
-          <a class="nav-link active" href="#overview"><span class="nav-icon compass"></span>Overview</a>
-          <a class="nav-link" href="#workflow"><span class="nav-icon path"></span>Workflow</a>
-          <a class="nav-link" href="#leads"><span class="nav-icon leads"></span>Leads</a>
-          <a class="nav-link" href="#campaigns"><span class="nav-icon campaigns"></span>Campaigns</a>
-          <a class="nav-link" href="#queue"><span class="nav-icon queue"></span>Draft Queue</a>
-        </nav>
-
-        <div class="sidebar-note">
-          <span>Draft-first mode</span>
-          <strong>SMTP sends only approved outreach.</strong>
+    <main class="scout-app">
+      <nav class="top-nav" aria-label="Scout navigation">
+        <a class="back-link" href="#mission" aria-label="Back to mission">‹</a>
+        <div class="progress-track" aria-label="Scout setup progress">
+          <span class="progress-fill"></span>
         </div>
-      </aside>
+        <a class="brand-lockup" href="#mission" aria-label="Scout home">scout</a>
+      </nav>
 
-      <main class="workspace">
-        <header id="overview" class="topbar">
-          <div>
-            <p class="eyebrow">Scout command center</p>
-            <h1>Find the right buyers, then queue the first touch.</h1>
+      <section id="mission" class="mission-screen">
+        <div class="mascot-row">
+          <div class="scout-mascot" aria-hidden="true">
+            <span class="eye left"></span>
+            <span class="eye right"></span>
+            <span class="radar"></span>
           </div>
-          <form id="run-form" class="run-form">
-            <label for="url-input">Website URL</label>
-            <div class="input-row">
-              <input id="url-input" name="url" type="url" placeholder="https://example.com" required>
-              <button type="submit">Run Scout</button>
-            </div>
-          </form>
-        </header>
+          <div class="speech-bubble">
+            <p>Who should we scout first?</p>
+          </div>
+        </div>
 
-        <section class="metrics-strip" aria-label="Scout metrics">
-          <div class="metric-card signal">
+        <form id="run-form" class="mission-form">
+          <label for="url-input">Website URL</label>
+          <div class="url-card">
+            <input id="url-input" name="url" type="url" placeholder="https://example.com" required>
+            <button type="submit">Run Scout</button>
+          </div>
+        </form>
+
+        <section class="choice-section" aria-label="Scout mission options">
+          <h1>Choose a mission</h1>
+          <div class="choice-list">
+            <button class="choice-card selected" type="button">
+              <span class="choice-icon target"></span>
+              <span>
+                <strong>Find buyer accounts</strong>
+                <small>Map high-fit companies</small>
+              </span>
+              <em>Recommended</em>
+            </button>
+            <button class="choice-card" type="button">
+              <span class="choice-icon contact"></span>
+              <span>
+                <strong>Capture public contacts</strong>
+                <small>Emails, phones, source pages</small>
+              </span>
+            </button>
+            <button class="choice-card" type="button">
+              <span class="choice-icon mail"></span>
+              <span>
+                <strong>Draft outreach</strong>
+                <small>Review before sending</small>
+              </span>
+            </button>
+          </div>
+        </section>
+
+        <section class="metrics-row" aria-label="Scout metrics">
+          <article>
             <span id="run-status">Ready</span>
             <strong id="metric-leads">0</strong>
-            <small>leads stored</small>
-          </div>
-          <div class="metric-card coral">
+            <small>leads</small>
+          </article>
+          <article>
             <span>Accounts</span>
             <strong id="metric-companies">0</strong>
-            <small>companies mapped</small>
-          </div>
-          <div class="metric-card violet">
-            <span>Outreach</span>
+            <small>mapped</small>
+          </article>
+          <article>
+            <span>Drafts</span>
             <strong id="metric-drafts">0</strong>
-            <small>drafts queued</small>
-          </div>
-          <div class="metric-card amber">
-            <span>Cadence</span>
-            <strong>7d</strong>
-            <small>weekly scheduler</small>
-          </div>
+            <small>queued</small>
+          </article>
         </section>
+      </section>
 
-        <section id="workflow" class="workflow-band" aria-label="Scout workflow">
-          <div class="section-head">
-            <div>
-              <p class="eyebrow">Workflow</p>
-              <h2>From homepage to weekly pipeline</h2>
-            </div>
-          </div>
-          <div class="workflow-grid">
-            <article class="workflow-step analyze">
-              <span class="step-number">01</span>
-              <h3>Read the site</h3>
-              <p>Scout pulls positioning, keywords, and likely buying segments from the submitted URL.</p>
-            </article>
-            <article class="workflow-step discover">
-              <span class="step-number">02</span>
-              <h3>Discover accounts</h3>
-              <p>Search and shallow crawling surface public business pages that match the inferred audience.</p>
-            </article>
-            <article class="workflow-step enrich">
-              <span class="step-number">03</span>
-              <h3>Capture contacts</h3>
-              <p>Emails, phone numbers, source pages, fit signals, and segments are stored in SQLite.</p>
-            </article>
-            <article class="workflow-step outreach">
-              <span class="step-number">04</span>
-              <h3>Queue outreach</h3>
-              <p>Drafts are generated for review and can be approved before the weekly sender runs.</p>
-            </article>
-          </div>
-        </section>
+      <section id="results" class="results-board">
+        <div class="section-title">
+          <p>Mission results</p>
+          <h2>Pipeline ready for review</h2>
+        </div>
 
-        <section class="content-grid">
-          <div id="leads" class="panel leads-panel">
+        <div class="board-grid">
+          <section class="panel leads-panel">
             <div class="panel-head">
-              <div>
-                <p class="eyebrow">Database</p>
-                <h2>Qualified leads</h2>
-              </div>
+              <span class="panel-icon leads"></span>
+              <h3>Qualified leads</h3>
             </div>
-            <div class="table-wrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Company</th>
-                    <th>Contact</th>
-                    <th>Segment</th>
-                    <th>Score</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody id="leads-body"></tbody>
-              </table>
-            </div>
-          </div>
+            <div id="leads-body" class="lead-list"></div>
+          </section>
 
-          <aside class="side-stack">
-            <div id="campaigns" class="panel campaigns-panel">
-              <div class="panel-head">
-                <div>
-                  <p class="eyebrow">Planner</p>
-                  <h2>Campaigns</h2>
-                </div>
-                <button id="tick-button" class="ghost" type="button">Run scheduler</button>
-              </div>
-              <div id="campaigns-list" class="stack"></div>
-            </div>
-
-            <div class="panel health-panel">
-              <div class="panel-head">
-                <div>
-                  <p class="eyebrow">Controls</p>
-                  <h2>Review gates</h2>
-                </div>
-              </div>
-              <div class="review-list">
-                <div><span class="review-dot teal"></span><strong>Public data only</strong></div>
-                <div><span class="review-dot gold"></span><strong>Drafts require approval</strong></div>
-                <div><span class="review-dot rose"></span><strong>Opt-outs are tracked</strong></div>
-              </div>
-            </div>
-          </aside>
-
-          <div id="queue" class="panel queue-panel">
+          <section class="panel campaigns-panel">
             <div class="panel-head">
-              <div>
-                <p class="eyebrow">Outbound</p>
-                <h2>Draft queue</h2>
-              </div>
+              <span class="panel-icon campaign"></span>
+              <h3>Campaign</h3>
             </div>
-            <div id="drafts-list" class="drafts"></div>
-          </div>
-        </section>
-      </main>
+            <div id="campaigns-list" class="campaign-list"></div>
+            <button id="tick-button" class="secondary-button" type="button">Run scheduler</button>
+          </section>
+
+          <section class="panel queue-panel">
+            <div class="panel-head">
+              <span class="panel-icon queue"></span>
+              <h3>Draft queue</h3>
+            </div>
+            <div id="drafts-list" class="draft-list"></div>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <div class="bottom-cta">
+      <a href="#results">Continue</a>
     </div>
     <script src="./app.js" type="module"></script>
   </body>

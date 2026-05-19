@@ -8,6 +8,7 @@ const tickButton = document.querySelector('#tick-button');
 const metricLeads = document.querySelector('#metric-leads');
 const metricCompanies = document.querySelector('#metric-companies');
 const metricDrafts = document.querySelector('#metric-drafts');
+const resultsBoard = document.querySelector('#results');
 
 const DEMO_DASHBOARD = {
   runs: [{ id: 1, source_url: 'https://www.shopify.com', status: 'demo', created_at: new Date().toISOString() }],
@@ -38,11 +39,24 @@ const DEMO_DASHBOARD = {
   ]
 };
 
+document.querySelectorAll('.choice-card').forEach((card) => {
+  card.addEventListener('click', () => {
+    document.querySelectorAll('.choice-card').forEach((item) => item.classList.remove('selected'));
+    card.classList.add('selected');
+  });
+});
+
+const resultsObserver = new IntersectionObserver(([entry]) => {
+  document.body.classList.toggle('results-visible', entry.isIntersecting);
+}, { threshold: 0.16 });
+
+resultsObserver.observe(resultsBoard);
+
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
   const button = form.querySelector('button');
   button.disabled = true;
-  statusEl.textContent = 'Analyzing site and discovering prospects...';
+  statusEl.textContent = 'Scouting...';
 
   try {
     const response = await fetch('api/runs', {
@@ -52,13 +66,14 @@ form.addEventListener('submit', async (event) => {
     });
     const payload = await response.json();
     if (!response.ok) throw new Error(payload.error || 'Run failed');
-    statusEl.textContent = `Complete: ${payload.profile.name}`;
+    statusEl.textContent = `Complete`;
     await refresh();
-  } catch (error) {
-    statusEl.textContent = 'Demo mode: connect the Node server to run live scouting.';
+  } catch {
+    statusEl.textContent = 'Demo mode';
     renderDashboard(DEMO_DASHBOARD);
   } finally {
     button.disabled = false;
+    document.querySelector('#results').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 });
 
@@ -67,7 +82,7 @@ tickButton.addEventListener('click', async () => {
   try {
     await fetch('api/scheduler/tick', { method: 'POST' });
   } catch {
-    statusEl.textContent = 'Demo mode: scheduler runs on the Node server.';
+    statusEl.textContent = 'Demo mode';
   }
   await refresh();
   tickButton.disabled = false;
@@ -81,7 +96,7 @@ draftsList.addEventListener('click', async (event) => {
     await fetch(`api/drafts/${button.dataset.approve}/approve`, { method: 'POST' });
     await refresh();
   } catch {
-    button.textContent = 'Demo approved';
+    button.textContent = 'Approved';
     button.disabled = true;
   }
 });
@@ -93,7 +108,7 @@ async function refresh() {
     const data = await response.json();
     renderDashboard(data);
   } catch {
-    statusEl.textContent = 'Demo mode: GitHub Pages is showing sample Scout data.';
+    statusEl.textContent = 'Demo mode';
     renderDashboard(DEMO_DASHBOARD);
   }
 }
@@ -104,36 +119,33 @@ function renderDashboard(data) {
   metricDrafts.textContent = data.drafts.length;
 
   leadsBody.innerHTML = data.leads.map((lead) => `
-    <tr>
-      <td><strong>${escapeHtml(lead.company_name || 'Unknown')}</strong><a class="company-link" href="${escapeAttribute(lead.source_url)}" target="_blank" rel="noreferrer">${escapeHtml(lead.source_url)}</a></td>
-      <td>${escapeHtml(lead.email || lead.phone || 'Contact page only')}</td>
-      <td>${escapeHtml(lead.segment || 'Qualified prospect')}</td>
-      <td><span class="score">${lead.confidence}</span></td>
-      <td><span class="pill">${escapeHtml(lead.status)}</span></td>
-    </tr>
-  `).join('') || emptyRow('No leads yet');
+    <article class="lead-card">
+      <div>
+        <strong>${escapeHtml(lead.company_name || 'Unknown')}</strong>
+        <a class="company-link" href="${escapeAttribute(lead.source_url)}" target="_blank" rel="noreferrer">${escapeHtml(lead.source_url)}</a>
+        <p class="lead-contact">${escapeHtml(lead.email || lead.phone || 'Contact page only')}</p>
+        <p class="meta">${escapeHtml(lead.segment || 'Qualified prospect')}</p>
+      </div>
+      <span class="score">${lead.confidence}</span>
+    </article>
+  `).join('') || '<div class="empty-state">No leads yet.</div>';
 
   campaignsList.innerHTML = data.campaigns.map((campaign) => `
-    <article class="item">
+    <article class="campaign-card">
       <strong>${escapeHtml(campaign.name)}</strong>
-      <div class="meta">${escapeHtml(campaign.audience)}</div>
-      <div class="meta">Offer: ${escapeHtml(campaign.offer)}</div>
-      <div class="meta">Next run: ${formatDate(campaign.next_run_at)}</div>
+      <p class="meta">${escapeHtml(campaign.audience)}</p>
+      <p class="meta">Next run: ${formatDate(campaign.next_run_at)}</p>
     </article>
-  `).join('') || '<div class="meta">No campaigns yet.</div>';
+  `).join('') || '<div class="empty-state">No campaigns yet.</div>';
 
   draftsList.innerHTML = data.drafts.map((draft) => `
-    <article class="draft">
+    <article class="draft-card">
       <strong>${escapeHtml(draft.subject)}</strong>
-      <div class="meta">${escapeHtml(draft.email)} · ${escapeHtml(draft.company_name)} · <span class="pill ${escapeHtml(draft.status)}">${escapeHtml(draft.status)}</span></div>
+      <p class="meta">${escapeHtml(draft.email)} · ${escapeHtml(draft.company_name)} · <span class="pill ${escapeHtml(draft.status)}">${escapeHtml(draft.status)}</span></p>
       <pre>${escapeHtml(draft.body)}</pre>
       ${draft.status === 'draft' ? `<button data-approve="${draft.id}" type="button">Approve</button>` : ''}
     </article>
-  `).join('') || '<div class="meta">No outreach drafts yet.</div>';
-}
-
-function emptyRow(message) {
-  return `<tr><td colspan="5" class="meta">${message}</td></tr>`;
+  `).join('') || '<div class="empty-state">No outreach drafts yet.</div>';
 }
 
 function formatDate(value) {
