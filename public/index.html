@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Scout</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Primary navigation">
+        <a class="brand" href="#overview" aria-label="Scout overview">
+          <span class="brand-mark">S</span>
+          <span>
+            <strong>Scout</strong>
+            <small>Outbound workspace</small>
+          </span>
+        </a>
+
+        <nav class="nav-list">
+          <a class="nav-link active" href="#overview"><span class="nav-icon compass"></span>Overview</a>
+          <a class="nav-link" href="#workflow"><span class="nav-icon path"></span>Workflow</a>
+          <a class="nav-link" href="#leads"><span class="nav-icon leads"></span>Leads</a>
+          <a class="nav-link" href="#campaigns"><span class="nav-icon campaigns"></span>Campaigns</a>
+          <a class="nav-link" href="#queue"><span class="nav-icon queue"></span>Draft Queue</a>
+        </nav>
+
+        <div class="sidebar-note">
+          <span>Draft-first mode</span>
+          <strong>SMTP sends only approved outreach.</strong>
+        </div>
+      </aside>
+
+      <main class="workspace">
+        <header id="overview" class="topbar">
+          <div>
+            <p class="eyebrow">Scout command center</p>
+            <h1>Find the right buyers, then queue the first touch.</h1>
+          </div>
+          <form id="run-form" class="run-form">
+            <label for="url-input">Website URL</label>
+            <div class="input-row">
+              <input id="url-input" name="url" type="url" placeholder="https://example.com" required>
+              <button type="submit">Run Scout</button>
+            </div>
+          </form>
+        </header>
+
+        <section class="metrics-strip" aria-label="Scout metrics">
+          <div class="metric-card signal">
+            <span id="run-status">Ready</span>
+            <strong id="metric-leads">0</strong>
+            <small>leads stored</small>
+          </div>
+          <div class="metric-card coral">
+            <span>Accounts</span>
+            <strong id="metric-companies">0</strong>
+            <small>companies mapped</small>
+          </div>
+          <div class="metric-card violet">
+            <span>Outreach</span>
+            <strong id="metric-drafts">0</strong>
+            <small>drafts queued</small>
+          </div>
+          <div class="metric-card amber">
+            <span>Cadence</span>
+            <strong>7d</strong>
+            <small>weekly scheduler</small>
+          </div>
+        </section>
+
+        <section id="workflow" class="workflow-band" aria-label="Scout workflow">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Workflow</p>
+              <h2>From homepage to weekly pipeline</h2>
+            </div>
+          </div>
+          <div class="workflow-grid">
+            <article class="workflow-step analyze">
+              <span class="step-number">01</span>
+              <h3>Read the site</h3>
+              <p>Scout pulls positioning, keywords, and likely buying segments from the submitted URL.</p>
+            </article>
+            <article class="workflow-step discover">
+              <span class="step-number">02</span>
+              <h3>Discover accounts</h3>
+              <p>Search and shallow crawling surface public business pages that match the inferred audience.</p>
+            </article>
+            <article class="workflow-step enrich">
+              <span class="step-number">03</span>
+              <h3>Capture contacts</h3>
+              <p>Emails, phone numbers, source pages, fit signals, and segments are stored in SQLite.</p>
+            </article>
+            <article class="workflow-step outreach">
+              <span class="step-number">04</span>
+              <h3>Queue outreach</h3>
+              <p>Drafts are generated for review and can be approved before the weekly sender runs.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="content-grid">
+          <div id="leads" class="panel leads-panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Database</p>
+                <h2>Qualified leads</h2>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Company</th>
+                    <th>Contact</th>
+                    <th>Segment</th>
+                    <th>Score</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="leads-body"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <aside class="side-stack">
+            <div id="campaigns" class="panel campaigns-panel">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">Planner</p>
+                  <h2>Campaigns</h2>
+                </div>
+                <button id="tick-button" class="ghost" type="button">Run scheduler</button>
+              </div>
+              <div id="campaigns-list" class="stack"></div>
+            </div>
+
+            <div class="panel health-panel">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">Controls</p>
+                  <h2>Review gates</h2>
+                </div>
+              </div>
+              <div class="review-list">
+                <div><span class="review-dot teal"></span><strong>Public data only</strong></div>
+                <div><span class="review-dot gold"></span><strong>Drafts require approval</strong></div>
+                <div><span class="review-dot rose"></span><strong>Opt-outs are tracked</strong></div>
+              </div>
+            </div>
+          </aside>
+
+          <div id="queue" class="panel queue-panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Outbound</p>
+                <h2>Draft queue</h2>
+              </div>
+            </div>
+            <div id="drafts-list" class="drafts"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script src="/app.js" type="module"></script>
+  </body>
+</html>
