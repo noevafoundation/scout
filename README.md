@@ -26,6 +26,8 @@ Open `http://localhost:3000`.
 
 For the static product demo, deploy the `public` directory on Vercel. The live Vercel preview will use demo data when the local Node API is not available.
 
+The production Vercel app serves the static UI from `public/` and live mission endpoints from `api/`.
+
 ## SMTP env vars
 
 ```bash
