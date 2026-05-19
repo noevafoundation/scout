@@ -22,6 +22,10 @@ npm run dev
 
 Open `http://localhost:3000`.
 
+## Vercel preview
+
+For the static product demo, deploy the `public` directory on Vercel. The live Vercel preview will use demo data when the local Node API is not available.
+
 ## SMTP env vars
 
 ```bash

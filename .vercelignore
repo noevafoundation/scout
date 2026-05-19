@@ -1,0 +1,6 @@
+data/
+node_modules/
+images/
+.env
+.env.*
+npm-debug.log*

@@ -18,11 +18,9 @@
 
       <section id="mission" class="mission-screen">
         <div class="mascot-row">
-          <div class="scout-mascot" aria-hidden="true">
-            <span class="eye left"></span>
-            <span class="eye right"></span>
-            <span class="radar"></span>
-          </div>
+          <figure class="character-frame hero-character" aria-hidden="true">
+            <img src="./assets/scout-binoculars.jpg" alt="">
+          </figure>
           <div class="speech-bubble">
             <p>Who should we scout first?</p>
           </div>
@@ -40,7 +38,7 @@
           <h1>Choose a mission</h1>
           <div class="choice-list">
             <button class="choice-card selected" type="button">
-              <span class="choice-icon target"></span>
+              <span class="choice-art"><img src="./assets/scout-map.jpg" alt=""></span>
               <span>
                 <strong>Find buyer accounts</strong>
                 <small>Map high-fit companies</small>
@@ -48,14 +46,14 @@
               <em>Recommended</em>
             </button>
             <button class="choice-card" type="button">
-              <span class="choice-icon contact"></span>
+              <span class="choice-art"><img src="./assets/scout-binoculars.jpg" alt=""></span>
               <span>
                 <strong>Capture public contacts</strong>
                 <small>Emails, phones, source pages</small>
               </span>
             </button>
             <button class="choice-card" type="button">
-              <span class="choice-icon mail"></span>
+              <span class="choice-art"><img src="./assets/scout-spark.jpg" alt=""></span>
               <span>
                 <strong>Draft outreach</strong>
                 <small>Review before sending</small>
@@ -85,8 +83,11 @@
 
       <section id="results" class="results-board">
         <div class="section-title">
-          <p>Mission results</p>
-          <h2>Pipeline ready for review</h2>
+          <div>
+            <p>Mission results</p>
+            <h2>Pipeline ready for review</h2>
+          </div>
+          <img class="section-buddy" src="./assets/scout-guitar.jpg" alt="">
         </div>
 
         <div class="board-grid">
