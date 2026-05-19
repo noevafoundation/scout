@@ -9,6 +9,35 @@ const metricLeads = document.querySelector('#metric-leads');
 const metricCompanies = document.querySelector('#metric-companies');
 const metricDrafts = document.querySelector('#metric-drafts');
 
+const DEMO_DASHBOARD = {
+  runs: [{ id: 1, source_url: 'https://www.shopify.com', status: 'demo', created_at: new Date().toISOString() }],
+  companies: [
+    { id: 1, name: 'Factori Commerce', website: 'https://factori.com', segment: 'ecommerce and retail brands', fit_score: 95 },
+    { id: 2, name: 'Commerce.Asia', website: 'https://commerce.asia', segment: 'B2B SaaS and operations teams', fit_score: 92 },
+    { id: 3, name: 'Commercedotcom', website: 'https://commercedc.com.my', segment: 'operations teams', fit_score: 89 }
+  ],
+  leads: [
+    { id: 1, company_name: 'Factori Commerce', email: 'start@factori.com', phone: '', source_url: 'https://factori.com/contact-us', segment: 'ecommerce and retail brands', confidence: 95, status: 'new' },
+    { id: 2, company_name: 'Factori Commerce', email: 'contact@factori.com', phone: '', source_url: 'https://factori.com/contact-us', segment: 'ecommerce and retail brands', confidence: 95, status: 'new' },
+    { id: 3, company_name: 'B2B e-Supplier Portal', email: 'helpdesk@b2b.com.my', phone: '+603-76297388', source_url: 'https://eportal.b2b.com.my/esupplier/pages/main/contacts.do', segment: 'B2B SaaS and operations teams', confidence: 95, status: 'new' },
+    { id: 4, company_name: 'Commerce.Asia', email: 'hello@commerce.asia', phone: '03-2022 5121', source_url: 'https://www.commerce.asia/about-us-commerce-asia', segment: 'ecommerce and retail brands', confidence: 92, status: 'new' },
+    { id: 5, company_name: 'Commercedotcom', email: 'cpg@commercedc.com.my', phone: '+603-7985 7777', source_url: 'https://www.commercedc.com.my/contact-us/', segment: 'operations teams', confidence: 89, status: 'new' }
+  ],
+  campaigns: [
+    {
+      id: 1,
+      name: 'Shopify audience scout',
+      audience: 'ecommerce and retail brands, B2B SaaS and operations teams',
+      offer: 'Scout identifies public buying signals and queues draft-first outreach.',
+      next_run_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+    }
+  ],
+  drafts: [
+    { id: 1, email: 'start@factori.com', company_name: 'Factori Commerce', subject: 'Factori Commerce + Scout workflow', body: 'Hi,\n\nI came across Factori Commerce while looking at ecommerce and retail brands.\n\nScout identifies public buying signals and queues draft-first outreach.\n\nWould it be useful to compare notes for 15 minutes next week?\n\nBest,\nScout', status: 'draft' },
+    { id: 2, email: 'helpdesk@b2b.com.my', company_name: 'B2B e-Supplier Portal', subject: 'B2B e-Supplier Portal + weekly outbound', body: 'Hi,\n\nI came across B2B e-Supplier Portal while looking at B2B SaaS and operations teams.\n\nScout keeps outreach reviewable before anything sends.\n\nWould it be useful to compare notes for 15 minutes next week?\n\nBest,\nScout', status: 'draft' }
+  ]
+};
+
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
   const button = form.querySelector('button');
@@ -16,7 +45,7 @@ form.addEventListener('submit', async (event) => {
   statusEl.textContent = 'Analyzing site and discovering prospects...';
 
   try {
-    const response = await fetch('/api/runs', {
+    const response = await fetch('api/runs', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ url: input.value })
@@ -26,7 +55,8 @@ form.addEventListener('submit', async (event) => {
     statusEl.textContent = `Complete: ${payload.profile.name}`;
     await refresh();
   } catch (error) {
-    statusEl.textContent = error.message;
+    statusEl.textContent = 'Demo mode: connect the Node server to run live scouting.';
+    renderDashboard(DEMO_DASHBOARD);
   } finally {
     button.disabled = false;
   }
@@ -34,7 +64,11 @@ form.addEventListener('submit', async (event) => {
 
 tickButton.addEventListener('click', async () => {
   tickButton.disabled = true;
-  await fetch('/api/scheduler/tick', { method: 'POST' });
+  try {
+    await fetch('api/scheduler/tick', { method: 'POST' });
+  } catch {
+    statusEl.textContent = 'Demo mode: scheduler runs on the Node server.';
+  }
   await refresh();
   tickButton.disabled = false;
 });
@@ -43,14 +77,28 @@ draftsList.addEventListener('click', async (event) => {
   const button = event.target.closest('[data-approve]');
   if (!button) return;
   button.disabled = true;
-  await fetch(`/api/drafts/${button.dataset.approve}/approve`, { method: 'POST' });
-  await refresh();
+  try {
+    await fetch(`api/drafts/${button.dataset.approve}/approve`, { method: 'POST' });
+    await refresh();
+  } catch {
+    button.textContent = 'Demo approved';
+    button.disabled = true;
+  }
 });
 
 async function refresh() {
-  const response = await fetch('/api/dashboard');
-  const data = await response.json();
+  try {
+    const response = await fetch('api/dashboard');
+    if (!response.ok) throw new Error('API unavailable');
+    const data = await response.json();
+    renderDashboard(data);
+  } catch {
+    statusEl.textContent = 'Demo mode: GitHub Pages is showing sample Scout data.';
+    renderDashboard(DEMO_DASHBOARD);
+  }
+}
 
+function renderDashboard(data) {
   metricLeads.textContent = data.leads.length;
   metricCompanies.textContent = data.companies.length;
   metricDrafts.textContent = data.drafts.length;
